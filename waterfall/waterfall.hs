@@ -29,16 +29,6 @@ data Options = Options {
     colorMap     :: Maybe [GLfloat]
 }
 
-parseSize :: ReadM Integer
-parseSize = eitherReader $ \arg -> case reads arg of
-    [(r, suffix)] -> case suffix of 
-        []  -> return r
-        "K" -> return $ r * 1000 
-        "M" -> return $ r * 1000000
-        "G" -> return $ r * 1000000000
-        x   -> Left  $ "Cannot parse suffix: `" ++ x ++ "'"
-    _             -> Left $ "Cannot parse value: `" ++ arg ++ "'"
-
 parseColorMap :: ReadM [GLfloat]
 parseColorMap = eitherReader func
     where
@@ -104,6 +94,8 @@ doIt Options{..} = do
     str          <- sdrStream frequency sampleRate 1 (fromIntegral $ fftSize' * 2)
     rfFFT        <- lift $ fftw fftSize'
     rfSpectrum   <- plotWaterfall (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' (maybe 1000 id rows) (maybe jet_mod id colorMap)
+    --rfSpectrum   <- plotFill (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' (maybe jet_mod id colorMap)
+    --rfSpectrum   <- plotTexture (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' fftSize'
 
     lift $ runEffect $   str 
                      >-> P.map (makeComplexBufferVect fftSize' :: VS.Vector CUChar -> VS.Vector (Complex CDouble)) 
