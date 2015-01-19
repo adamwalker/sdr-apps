@@ -71,19 +71,19 @@ sqd        = samples `quot` decimation
 doIt Options{..} = do
 
     let rtlstream = do
-        str <- sdrStream frequency 1280000 bufNum bufLen
-        return $ str >-> P.map (makeComplexBufferVect samples) 
+            str <- sdrStream frequency 1280000 bufNum bufLen
+            return $ str >-> P.map (makeComplexBufferVect samples) 
 
     let fileStream fname = lift $ do
-        h <- openFile fname ReadMode
-        return $ fromHandle samples h 
-        --TODO: how do I ensure these handles get closed?
+            h <- openFile fname ReadMode
+            return $ fromHandle samples h 
+            --TODO: how do I ensure these handles get closed?
 
     inputSpectrum <- maybe rtlstream fileStream input
 
     let fileSink fname = do
-        h <- openFile fname ReadMode
-        return $ toHandle h 
+            h <- openFile fname ReadMode
+            return $ toHandle h 
 
     sink <- lift $ maybe pulseAudioSink fileSink output
 
