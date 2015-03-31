@@ -22,6 +22,7 @@ executable fm
   build-depends:       base >=4.7 && <4.8, sdr, vector, either, pipes, storable-complex, optparse-applicative
   hs-source-dirs:      fm
   default-language:    Haskell2010
+  ghc-options:         -threaded
 
 executable record
   main-is:             record.hs
@@ -30,6 +31,7 @@ executable record
   build-depends:       base >=4.7 && <4.8, sdr, vector, either, pipes, storable-complex, optparse-applicative
   hs-source-dirs:      record
   default-language:    Haskell2010
+  ghc-options:         -threaded
 
 executable waterfall
   main-is:             waterfall.hs
@@ -38,4 +40,4 @@ executable waterfall
   build-depends:       base >=4.7 && <4.8, sdr, vector, either, pipes, storable-complex, optparse-applicative, OpenGL, dynamic-graph
   hs-source-dirs:      waterfall
   default-language:    Haskell2010
-
+  ghc-options:         -threaded
