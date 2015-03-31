@@ -13,8 +13,10 @@ import Pipes as P
 import Pipes.Prelude as P
 import Data.Vector.Storable as VS hiding ((++))
 
-import SDR.Util as U
+import SDR.Util 
 import SDR.RTLSDRStream
+import SDR.ArgUtils 
+import SDR.Serialize as S
 
 data Options = Options {
     fileName   :: FilePath,
@@ -56,7 +58,7 @@ opt = info (helper <*> optParser) (fullDesc <> progDesc "Record IQ samples from 
 doIt Options{..} = do
     str <- sdrStream frequency sampleRate 1 16384
     lift $ withFile fileName WriteMode $ \handle -> 
-        runEffect $ str >-> (maybe P.cat P.take size) >-> P.map (makeComplexBufferVect 8192 :: VS.Vector CUChar -> VS.Vector (Complex CFloat)) >-> U.toHandle handle
+        runEffect $ str >-> maybe P.cat P.take size >-> P.map (makeComplexBufferVect 8192 :: VS.Vector CUChar -> VS.Vector (Complex CFloat)) >-> S.toHandle handle
 
 main = execParser opt >>= eitherT putStrLn return . doIt
 

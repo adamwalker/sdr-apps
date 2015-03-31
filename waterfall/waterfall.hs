@@ -4,6 +4,7 @@ import Control.Monad.Trans.Either
 import Data.Word
 import Data.Complex
 import Foreign.C.Types
+import Data.Maybe
 
 import Pipes as P
 import Pipes.Prelude as P
@@ -16,6 +17,7 @@ import SDR.Util as U
 import SDR.RTLSDRStream
 import SDR.FFT
 import SDR.Plot
+import SDR.ArgUtils
 import Graphics.DynamicGraph.Waterfall
 import Graphics.DynamicGraph.Util
 
@@ -32,12 +34,12 @@ data Options = Options {
 parseColorMap :: ReadM [GLfloat]
 parseColorMap = eitherReader func
     where
-    func "jet"     = return $ jet
-    func "jet_mod" = return $ jet_mod
-    func "hot"     = return $ hot
-    func "bw"      = return $ bw
-    func "wb"      = return $ wb
-    func arg       = Left   $ "Cannot parse colour map: `" ++ arg ++ "'"
+    func "jet"     = return jet
+    func "jet_mod" = return jet_mod
+    func "hot"     = return hot
+    func "bw"      = return bw
+    func "wb"      = return wb
+    func arg       = Left $ "Cannot parse colour map: `" ++ arg ++ "'"
 
 optParser :: Parser Options
 optParser = Options 
@@ -89,11 +91,11 @@ opt = info (helper <*> optParser) (fullDesc <> progDesc "Draw a dynamic waterall
 
 doIt Options{..} = do
     setupGLFW
-    let fftSize' =  maybe 8192 id fftSize
+    let fftSize' =  fromMaybe 8192 fftSize
         window   =  hanning fftSize' :: VS.Vector CDouble
     str          <- sdrStream frequency sampleRate 1 (fromIntegral $ fftSize' * 2)
     rfFFT        <- lift $ fftw fftSize'
-    rfSpectrum   <- plotWaterfall (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' (maybe 1000 id rows) (maybe jet_mod id colorMap)
+    rfSpectrum   <- plotWaterfall (fromMaybe 1024 windowWidth) (fromMaybe 480 windowHeight) fftSize' (fromMaybe 1000 rows) (fromMaybe jet_mod colorMap)
     --rfSpectrum   <- plotFill (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' (maybe jet_mod id colorMap)
     --rfSpectrum   <- plotTexture (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' fftSize'
 

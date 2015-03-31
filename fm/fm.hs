@@ -18,6 +18,8 @@ import SDR.RTLSDRStream
 import SDR.Util
 import SDR.Demod
 import SDR.Pulse
+import SDR.Serialize
+import SDR.ArgUtils
 
 --The filter coefficients are stored in another module
 import Coeffs
@@ -59,20 +61,20 @@ decimation = 8
 sqd        = samples `quot` decimation
 
 {-
-    sampling frequency of the input is 1280 khz
-    this is decimated by a factor of 8 and then demodulated
-    sampling frequency of demodulated signal is 160 khz
-    need audio output at 48 khz
-    resampling factor is 48/160 == 3/10
+    Sampling frequency of the input is 1280 khz
+    This is decimated by a factor of 8 and then demodulated
+    Sampling frequency of demodulated signal is 160 khz
+    Need audio output at 48 khz
+    Resampling factor is 48/160 == 3/10
     FM pilot tone at 19khz (0.3958 * 48)
-    start audio filter cutoff at 15khz (0.3125 * 48)
+    Start audio filter cutoff at 15khz (0.3125 * 48)
 -}
 
 doIt Options{..} = do
 
     let rtlstream = do
             str <- sdrStream frequency 1280000 bufNum bufLen
-            return $ str >-> P.map (makeComplexBufferVect samples) 
+            return $ str >-> P.map (convertCAVX samples) 
 
     let fileStream fname = lift $ do
             h <- openFile fname ReadMode
@@ -87,14 +89,18 @@ doIt Options{..} = do
 
     sink <- lift $ maybe pulseAudioSink fileSink output
 
+    deci <- lift $ fastDecimatorC decimation coeffsRFDecim 
+    resp <- lift $ haskellResampler 3 10 coeffsAudioResampler
+    filt <- lift $ fastSymmetricFilterR  coeffsAudioFilter
+
     --Build the pipeline
     let pipeline :: Effect IO ()
         pipeline =   inputSpectrum 
-                 >-> decimate decimation (VG.fromList coeffsRFDecim) samples sqd 
+                 >-> decimate deci decimation samples sqd 
                  >-> P.map (fmDemodVec 0) 
-                 >-> resample 3 10 (VG.fromList coeffsAudioResampler) sqd sqd 
-                 >-> filterr (VG.fromList coeffsAudioFilter) sqd sqd
-                 >-> P.map (VG.map ((* 0.2))) 
+                 >-> resample resp 3 10 sqd sqd 
+                 >-> filterr filt sqd sqd
+                 >-> P.map (VG.map (* 0.2)) 
                  >-> sink
 
     --Run the pipeline
