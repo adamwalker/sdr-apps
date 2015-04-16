@@ -5,6 +5,7 @@ import Data.Word
 import Data.Complex
 import Foreign.C.Types
 import Data.Maybe
+import Control.Monad
 
 import Pipes as P
 import Pipes.Prelude as P
@@ -90,7 +91,9 @@ opt :: ParserInfo Options
 opt = info (helper <*> optParser) (fullDesc <> progDesc "Draw a dynamic waterall plot of the received spectrum using OpenGL" <> header "RTLSDR Waterfall")
 
 doIt Options{..} = do
-    setupGLFW
+    res <- lift setupGLFW
+    unless res (left "Unable to initilize GLFW")
+
     let fftSize' =  fromMaybe 8192 fftSize
         window   =  hanning fftSize' :: VS.Vector CDouble
     str          <- sdrStream frequency sampleRate 1 (fromIntegral $ fftSize' * 2)
