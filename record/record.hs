@@ -58,7 +58,7 @@ opt = info (helper <*> optParser) (fullDesc <> progDesc "Record IQ samples from 
 doIt Options{..} = do
     str <- sdrStream frequency sampleRate 1 16384
     lift $ withFile fileName WriteMode $ \handle -> 
-        runEffect $ str >-> maybe P.cat P.take size >-> P.map (makeComplexBufferVect 8192 :: VS.Vector CUChar -> VS.Vector (Complex CFloat)) >-> S.toHandle handle
+        runEffect $ str >-> maybe P.cat P.take size >-> P.map (makeComplexBufferVect :: VS.Vector CUChar -> VS.Vector (Complex CFloat)) >-> S.toHandle handle
 
 main = execParser opt >>= eitherT putStrLn return . doIt
 

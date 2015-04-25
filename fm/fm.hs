@@ -74,7 +74,7 @@ doIt Options{..} = do
 
     let rtlstream = do
             str <- sdrStream frequency 1280000 bufNum bufLen
-            return $ str >-> P.map (convertCAVX samples) 
+            return $ str >-> P.map convertCAVX 
 
     let fileStream fname = lift $ do
             h <- openFile fname ReadMode

@@ -62,7 +62,7 @@ doIt Options{..} = do
     pulseSink       <- lift pulseAudioSink
 
     lift $ runEffect $   str 
-                     >-> P.map (convertCAVX size) 
+                     >-> P.map convertCAVX 
                      >-> P.map (VG.zipWith (*) (quarterBandUp size))
                      >-> decimate deci size 
                      >-> decimate deci size 

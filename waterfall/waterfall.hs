@@ -103,7 +103,7 @@ doIt Options{..} = do
     --rfSpectrum   <- plotTexture (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' fftSize'
 
     lift $ runEffect $   str 
-                     >-> P.map (makeComplexBufferVect fftSize' :: VS.Vector CUChar -> VS.Vector (Complex CDouble)) 
+                     >-> P.map (makeComplexBufferVect :: VS.Vector CUChar -> VS.Vector (Complex CDouble)) 
                      >-> P.map (VG.zipWith (flip mult) window . VG.zipWith mult (fftFixup fftSize')) 
                      >-> rfFFT 
                      >-> P.map (VG.map ((* (32 / fromIntegral fftSize')) . realToFrac . magnitude)) 
