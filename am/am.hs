@@ -48,15 +48,15 @@ doIt Options{..} = do
     str             <- sdrStream (frequency + 256000) 1024000 1 (fromIntegral $ size * 2)
 
     let coeffsDecim :: [Float]
-        coeffsDecim =  VS.toList $ VG.zipWith (*) (sinc 71 0.4) (blackman 71)
+        coeffsDecim =  VS.toList $ windowedSinc 71 0.4 blackman
     deci            <- lift $ fastDecimatorC 2 coeffsDecim 
 
     let coeffsFilt  :: [Float]
-        coeffsFilt  =  VS.toList $ VG.zipWith (*) (sinc 71 (fromIntegral (fromMaybe 16000 bandwidth) / 32000)) (blackman 71)
+        coeffsFilt  =  VS.toList $ windowedSinc 71 (fromIntegral (fromMaybe 16000 bandwidth) / 32000) blackman 
     filt            <- lift $ fastFilterC coeffsFilt
 
     let coeffsResp  :: [Float]
-        coeffsResp  =  VS.toList $ VG.zipWith (*) (sinc 71 0.25) (blackman 71)
+        coeffsResp  =  VS.toList $ windowedSinc 71 0.25 blackman 
     resp            <- lift $ haskellResampler 3 2 coeffsResp
 
     pulseSink       <- lift pulseAudioSink
