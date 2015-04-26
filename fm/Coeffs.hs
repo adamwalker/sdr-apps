@@ -1,8 +1,5 @@
 module Coeffs where
 
-import Data.Complex
-import Foreign.C.Types
-
 {-
   In Octave:
   pkg load signal
