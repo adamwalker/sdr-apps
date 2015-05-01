@@ -96,10 +96,10 @@ doIt Options{..} = do
     --Build the pipeline
     let pipeline :: Effect IO ()
         pipeline =   inputSpectrum 
-                 >-> decimate deci sqd 
+                 >-> firDecimator deci sqd 
                  >-> P.map (fmDemodVec 0) 
-                 >-> resample resp sqd 
-                 >-> filterr filt sqd
+                 >-> firResampler resp sqd 
+                 >-> firFilter filt sqd
                  >-> P.map (VG.map (* 0.2)) 
                  >-> sink
 

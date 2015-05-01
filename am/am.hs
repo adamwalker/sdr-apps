@@ -64,15 +64,15 @@ doIt Options{..} = do
     lift $ runEffect $   str 
                      >-> P.map convertCAVX 
                      >-> P.map (VG.zipWith (*) (quarterBandUp size))
-                     >-> decimate deci size 
-                     >-> decimate deci size 
-                     >-> decimate deci size 
-                     >-> decimate deci size 
-                     >-> decimate deci size 
-                     >-> filterr  filt size
+                     >-> firDecimator deci size 
+                     >-> firDecimator deci size 
+                     >-> firDecimator deci size 
+                     >-> firDecimator deci size 
+                     >-> firDecimator deci size 
+                     >-> firFilter  filt size
                      >-> P.map (VG.map magnitude)
                      >-> dcBlockingFilter
-                     >-> resample resp size
+                     >-> firResampler resp size
                      >-> P.map (VG.map (* 6))
                      >-> pulseSink
 
