@@ -97,7 +97,7 @@ doIt Options{..} = do
     let pipeline :: Effect IO ()
         pipeline =   inputSpectrum 
                  >-> firDecimator deci sqd 
-                 >-> P.map (fmDemodVec 0) 
+                 >-> fmDemod
                  >-> firResampler resp sqd 
                  >-> firFilter filt sqd
                  >-> P.map (VG.map (* 0.2)) 
