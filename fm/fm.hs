@@ -90,7 +90,7 @@ doIt Options{..} = do
     sink <- lift $ maybe pulseAudioSink fileSink output
 
     deci <- lift $ fastDecimatorC decimation coeffsRFDecim 
-    resp <- lift $ haskellResampler 3 10 coeffsAudioResampler
+    resp <- lift $ fastResampler 3 10 coeffsAudioResampler
     filt <- lift $ fastSymmetricFilterR  coeffsAudioFilter
 
     --Build the pipeline

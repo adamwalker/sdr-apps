@@ -57,7 +57,7 @@ doIt Options{..} = do
 
     let coeffsResp  :: [Float]
         coeffsResp  =  VS.toList $ windowedSinc 71 0.25 blackman 
-    resp            <- lift $ haskellResampler 3 2 coeffsResp
+    resp            <- lift $ fastResampler 3 2 coeffsResp
 
     pulseSink       <- lift pulseAudioSink
 
