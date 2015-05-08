@@ -20,6 +20,7 @@ import SDR.Demod
 import SDR.Pulse
 import SDR.Serialize
 import SDR.ArgUtils
+import SDR.CPUID
 
 --The filter coefficients are stored in another module
 import Coeffs
@@ -72,9 +73,11 @@ sqd        = samples `quot` decimation
 
 doIt Options{..} = do
 
+    info <- lift getCPUInfo
+
     let rtlstream = do
             str <- sdrStream frequency 1280000 bufNum bufLen
-            return $ str >-> P.map convertCAVX 
+            return $ str >-> P.map (convertFast info) 
 
     let fileStream fname = lift $ do
             h <- openFile fname ReadMode
@@ -89,8 +92,8 @@ doIt Options{..} = do
 
     sink <- lift $ maybe pulseAudioSink fileSink output
 
-    deci <- lift $ fastDecimatorC decimation coeffsRFDecim 
-    resp <- lift $ fastResampler 3 10 coeffsAudioResampler
+    deci <- lift $ fastDecimatorC info decimation coeffsRFDecim 
+    resp <- lift $ fastResamplerR info 3 10 coeffsAudioResampler
     filt <- lift $ fastSymmetricFilterR  coeffsAudioFilter
 
     --Build the pipeline

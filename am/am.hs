@@ -18,6 +18,7 @@ import SDR.ArgUtils
 import SDR.FilterDesign
 import SDR.Pulse
 import SDR.PipeUtils
+import SDR.CPUID
 
 data Options = Options {
     frequency    :: Word32,
@@ -45,24 +46,27 @@ opt = info (helper <*> optParser) (fullDesc <> progDesc "Receive AM Radio" <> he
 size = 4096
 
 doIt Options{..} = do
+
+    info            <- lift getCPUInfo
+
     str             <- sdrStream (frequency + 256000) 1024000 1 (fromIntegral $ size * 2)
 
     let coeffsDecim :: [Float]
         coeffsDecim =  VS.toList $ windowedSinc 71 0.4 blackman
-    deci            <- lift $ fastDecimatorC 2 coeffsDecim 
+    deci            <- lift $ fastDecimatorC info 2 coeffsDecim 
 
     let coeffsFilt  :: [Float]
         coeffsFilt  =  VS.toList $ windowedSinc 71 (fromIntegral (fromMaybe 16000 bandwidth) / 32000) blackman 
-    filt            <- lift $ fastFilterC coeffsFilt
+    filt            <- lift $ fastFilterC info coeffsFilt
 
     let coeffsResp  :: [Float]
         coeffsResp  =  VS.toList $ windowedSinc 71 0.25 blackman 
-    resp            <- lift $ fastResampler 3 2 coeffsResp
+    resp            <- lift $ fastResamplerR info 3 2 coeffsResp
 
     pulseSink       <- lift pulseAudioSink
 
     lift $ runEffect $   str 
-                     >-> P.map convertCAVX 
+                     >-> P.map (convertFast info)
                      >-> P.map (VG.zipWith (*) (quarterBandUp size))
                      >-> firDecimator deci size 
                      >-> firDecimator deci size 
