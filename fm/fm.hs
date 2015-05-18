@@ -94,7 +94,7 @@ doIt Options{..} = do
 
     deci <- lift $ fastDecimatorC info decimation coeffsRFDecim 
     resp <- lift $ fastResamplerR info 3 10 coeffsAudioResampler
-    filt <- lift $ fastSymmetricFilterR  coeffsAudioFilter
+    filt <- lift $ fastFilterSymR info coeffsAudioFilter
 
     --Build the pipeline
     let pipeline :: Effect IO ()
