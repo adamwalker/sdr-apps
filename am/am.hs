@@ -66,7 +66,7 @@ doIt Options{..} = do
     pulseSink       <- lift pulseAudioSink
 
     lift $ runEffect $   str 
-                     >-> P.map (convertFast info)
+                     >-> P.map (interleavedIQUnsignedByteToFloatFast info)
                      >-> P.map (VG.zipWith (*) (quarterBandUp size))
                      >-> firDecimator deci size 
                      >-> firDecimator deci size 
