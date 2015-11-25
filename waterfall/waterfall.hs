@@ -96,7 +96,7 @@ doIt Options{..} = do
 
     let fftSize' =  fromMaybe 8192 fftSize
         window   =  hanning fftSize' :: VS.Vector CDouble
-    str          <- sdrStream frequency sampleRate 1 (fromIntegral $ fftSize' * 2)
+    str          <- sdrStream (defaultRTLSDRParams frequency sampleRate) 1 (fromIntegral $ fftSize' * 2)
     rfFFT        <- lift $ fftw fftSize'
     rfSpectrum   <- plotWaterfall (fromMaybe 1024 windowWidth) (fromMaybe 480 windowHeight) fftSize' (fromMaybe 1000 rows) (fromMaybe jet_mod colorMap)
     --rfSpectrum   <- plotFill (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' (maybe jet_mod id colorMap)

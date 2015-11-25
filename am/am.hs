@@ -49,7 +49,7 @@ doIt Options{..} = do
 
     info            <- lift getCPUInfo
 
-    str             <- sdrStream (frequency + 256000) 1024000 1 (fromIntegral $ size * 2)
+    str             <- sdrStream (defaultRTLSDRParams (frequency + 256000) 1024000) 1 (fromIntegral $ size * 2)
 
     let coeffsDecim :: [Float]
         coeffsDecim =  VS.toList $ windowedSinc 71 0.4 blackman

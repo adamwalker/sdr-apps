@@ -56,7 +56,7 @@ opt :: ParserInfo Options
 opt = info (helper <*> optParser) (fullDesc <> progDesc "Record IQ samples from an RTL2832 based device" <> header "RTLSDR Record")
 
 doIt Options{..} = do
-    str <- sdrStream frequency sampleRate 1 16384
+    str <- sdrStream (defaultRTLSDRParams frequency sampleRate) 1 16384
     lift $ withFile fileName WriteMode $ \handle -> 
         runEffect $ str >-> maybe P.cat P.take size >-> P.map (interleavedIQUnsigned256ToFloat :: VS.Vector CUChar -> VS.Vector (Complex CFloat)) >-> S.toHandle handle
 

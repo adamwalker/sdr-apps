@@ -76,7 +76,7 @@ doIt Options{..} = do
     info <- lift getCPUInfo
 
     let rtlstream = do
-            str <- sdrStream frequency 1280000 bufNum bufLen
+            str <- sdrStream (defaultRTLSDRParams frequency 1280000) bufNum bufLen
             return $ str >-> P.map (interleavedIQUnsignedByteToFloatFast info) 
 
     let fileStream fname = lift $ do
