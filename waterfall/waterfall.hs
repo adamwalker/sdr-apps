@@ -2,6 +2,7 @@
 
 import Control.Monad.Trans.Either
 import Data.Word
+import Data.Int
 import Data.Complex
 import Foreign.C.Types
 import Data.Maybe
@@ -25,6 +26,7 @@ import Graphics.DynamicGraph.Util
 data Options = Options {
     frequency    :: Word32,
     sampleRate   :: Word32,
+    gain         :: Maybe Int32,
     fftSize      :: Maybe Int,
     windowWidth  :: Maybe Int,
     windowHeight :: Maybe Int,
@@ -56,6 +58,12 @@ optParser = Options
               <> metavar "RATE" 
               <> help "Sample rate"
               )
+          <*> optional (option auto (
+                 long "gain" 
+              <> short 'g' 
+              <> metavar "GAIN" 
+              <> help "Tuner gain"
+              ))
           <*> optional (option (fmap fromIntegral parseSize) (
                  long "size" 
               <> short 's' 
@@ -96,7 +104,7 @@ doIt Options{..} = do
 
     let fftSize' =  fromMaybe 8192 fftSize
         window   =  hanning fftSize' :: VS.Vector CDouble
-    str          <- sdrStream (defaultRTLSDRParams frequency sampleRate) 1 (fromIntegral $ fftSize' * 2)
+    str          <- sdrStream ((defaultRTLSDRParams frequency sampleRate) {tunerGain = gain}) 1 (fromIntegral $ fftSize' * 2)
     rfFFT        <- lift $ fftw fftSize'
     rfSpectrum   <- plotWaterfall (fromMaybe 1024 windowWidth) (fromMaybe 480 windowHeight) fftSize' (fromMaybe 1000 rows) (fromMaybe jet_mod colorMap)
     --rfSpectrum   <- plotFill (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' (maybe jet_mod id colorMap)
