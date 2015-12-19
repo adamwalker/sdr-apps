@@ -112,7 +112,7 @@ doIt Options{..} = do
 
     lift $ runEffect $   str 
                      >-> P.map (interleavedIQUnsigned256ToFloat :: VS.Vector CUChar -> VS.Vector (Complex CDouble)) 
-                     >-> P.map (VG.zipWith (flip mult) window . VG.zipWith mult (fftFixup fftSize')) 
+                     >-> P.map (VG.zipWith (flip mult) window . VG.zipWith mult (halfBandUp fftSize')) 
                      >-> rfFFT 
                      >-> P.map (VG.map ((* (32 / fromIntegral fftSize')) . realToFrac . magnitude)) 
                      >-> rfSpectrum 
