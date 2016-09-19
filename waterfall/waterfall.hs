@@ -103,7 +103,7 @@ doIt Options{..} = do
     unless res (left "Unable to initilize GLFW")
 
     let fftSize' =  fromMaybe 8192 fftSize
-        window   =  hanning fftSize' :: VS.Vector CDouble
+        window   =  hanning fftSize' :: VS.Vector Double
     str          <- sdrStream ((defaultRTLSDRParams frequency sampleRate) {tunerGain = gain}) 1 (fromIntegral $ fftSize' * 2)
     rfFFT        <- lift $ fftw fftSize'
     rfSpectrum   <- plotWaterfall (fromMaybe 1024 windowWidth) (fromMaybe 480 windowHeight) fftSize' (fromMaybe 1000 rows) (fromMaybe jet_mod colorMap)
@@ -111,7 +111,7 @@ doIt Options{..} = do
     --rfSpectrum   <- plotTexture (maybe 1024 id windowWidth) (maybe 480 id windowHeight) fftSize' fftSize'
 
     lift $ runEffect $   str 
-                     >-> P.map (interleavedIQUnsigned256ToFloat :: VS.Vector CUChar -> VS.Vector (Complex CDouble)) 
+                     >-> P.map (interleavedIQUnsigned256ToFloat :: VS.Vector CUChar -> VS.Vector (Complex Double)) 
                      >-> P.map (VG.zipWith (flip mult) window . VG.zipWith mult (halfBandUp fftSize')) 
                      >-> rfFFT 
                      >-> P.map (VG.map ((* (32 / fromIntegral fftSize')) . realToFrac . magnitude)) 
