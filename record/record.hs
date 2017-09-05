@@ -6,6 +6,7 @@ import System.IO
 import Data.Word
 import Data.Complex
 import Foreign.C.Types
+import Data.Monoid
 
 import Foreign.Storable.Complex
 import Options.Applicative

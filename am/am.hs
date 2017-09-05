@@ -4,6 +4,7 @@ import Control.Monad.Trans.Either
 import Data.Word
 import Data.Complex
 import Data.Maybe
+import Data.Monoid
 
 import Pipes                as P
 import Pipes.Prelude        as P

@@ -7,6 +7,7 @@ import Data.Complex
 import Foreign.C.Types
 import Data.Maybe
 import Control.Monad
+import Data.Monoid
 
 import Pipes as P
 import Pipes.Prelude as P

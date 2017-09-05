@@ -4,6 +4,7 @@ import Control.Monad.Trans.Either
 import Foreign.C.Types
 import Data.Word
 import System.IO
+import Data.Monoid
 
 import Data.Vector.Storable as VS hiding ((++))
 import Data.Vector.Generic as VG hiding ((++))
