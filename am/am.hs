@@ -1,11 +1,12 @@
 {-# LANGUAGE RecordWildCards #-}
 
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import Data.Word
 import Data.Complex
 import Data.Maybe
 import Data.Monoid
 
+import Control.Error.Util
 import Pipes                as P
 import Pipes.Prelude        as P
 import Options.Applicative
@@ -81,5 +82,5 @@ doIt Options{..} = do
                      >-> P.map (VG.map (* 6))
                      >-> pulseSink
 
-main = execParser opt >>= eitherT putStrLn return . doIt
+main = execParser opt >>= exceptT putStrLn return . doIt
 

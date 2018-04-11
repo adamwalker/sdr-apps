@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
 
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import Data.Word
 import Data.Int
 import Data.Complex
@@ -9,6 +9,7 @@ import Data.Maybe
 import Control.Monad
 import Data.Monoid
 
+import Control.Error.Util
 import Pipes as P
 import Pipes.Prelude as P
 import Options.Applicative
@@ -101,7 +102,7 @@ opt = info (helper <*> optParser) (fullDesc <> progDesc "Draw a dynamic waterall
 
 doIt Options{..} = do
     res <- lift setupGLFW
-    unless res (left "Unable to initilize GLFW")
+    unless res (throwE "Unable to initilize GLFW")
 
     let fftSize' =  fromMaybe 8192 fftSize
         window   =  hanning fftSize' :: VS.Vector Double
@@ -118,5 +119,5 @@ doIt Options{..} = do
                      >-> P.map (VG.map ((* (32 / fromIntegral fftSize')) . realToFrac . magnitude)) 
                      >-> rfSpectrum 
 
-main = execParser opt >>= eitherT putStrLn return . doIt
+main = execParser opt >>= exceptT putStrLn return . doIt
 

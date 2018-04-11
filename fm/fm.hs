@@ -1,11 +1,12 @@
 {-# LANGUAGE RecordWildCards #-}
 import Data.Complex
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import Foreign.C.Types
 import Data.Word
 import System.IO
 import Data.Monoid
 
+import Control.Error.Util
 import Data.Vector.Storable as VS hiding ((++))
 import Data.Vector.Generic as VG hiding ((++))
 import Pipes
@@ -110,5 +111,5 @@ doIt Options{..} = do
     --Run the pipeline
     lift $ runEffect pipeline
 
-main = execParser opt >>= eitherT putStrLn return . doIt
+main = execParser opt >>= exceptT putStrLn return . doIt
 

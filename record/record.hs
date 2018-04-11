@@ -1,13 +1,14 @@
 {-# LANGUAGE RecordWildCards #-}
 module Main where
 
-import Control.Monad.Trans.Either
+import Control.Monad.Trans.Except
 import System.IO
 import Data.Word
 import Data.Complex
 import Foreign.C.Types
 import Data.Monoid
 
+import Control.Error.Util
 import Foreign.Storable.Complex
 import Options.Applicative
 import Pipes as P
@@ -61,5 +62,5 @@ doIt Options{..} = do
     lift $ withFile fileName WriteMode $ \handle -> 
         runEffect $ str >-> maybe P.cat P.take size >-> P.map (interleavedIQUnsigned256ToFloat :: VS.Vector CUChar -> VS.Vector (Complex CFloat)) >-> S.toHandle handle
 
-main = execParser opt >>= eitherT putStrLn return . doIt
+main = execParser opt >>= exceptT putStrLn return . doIt
 
