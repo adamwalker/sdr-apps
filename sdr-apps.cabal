@@ -54,3 +54,21 @@ executable waterfall
     default-language:    Haskell2010
     ghc-options:         -threaded -O2
 
+executable to-udp
+    main-is:             to-udp.hs
+    other-modules:       
+    -- other-extensions:    
+    build-depends:       base >=4.7 && <5, sdr, vector, transformers, errors, pipes, storable-complex, optparse-applicative, network
+    hs-source-dirs:      to-udp
+    default-language:    Haskell2010
+    ghc-options:         -threaded -O2
+
+executable from-udp
+    main-is:             from-udp.hs
+    other-modules:       
+    -- other-extensions:    
+    build-depends:       base >=4.7 && <5, sdr, vector, transformers, errors, pipes, storable-complex, optparse-applicative, OpenGL, dynamic-graph, network
+    hs-source-dirs:      from-udp
+    default-language:    Haskell2010
+    ghc-options:         -threaded -O2
+
