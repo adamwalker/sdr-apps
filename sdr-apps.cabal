@@ -72,3 +72,12 @@ executable from-udp
     default-language:    Haskell2010
     ghc-options:         -threaded -O2
 
+executable to-sound
+    main-is:             to-sound.hs
+    other-modules:       
+    -- other-extensions:    
+    build-depends:       base >=4.7 && <5, sdr, vector, transformers, errors, pipes, optparse-applicative, network
+    hs-source-dirs:      to-sound
+    default-language:    Haskell2010
+    ghc-options:         -threaded -O2
+
