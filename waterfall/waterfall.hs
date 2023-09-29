@@ -79,15 +79,15 @@ optParser = Options
               <> help "Window width. Default is 1024."
               ))
           <*> optional (option auto (
-                 long "height" 
-              <> short 'h' 
-              <> metavar "HEIGHT" 
+                 long "vertSize" 
+              <> short 'v' 
+              <> metavar "VERTSIZE" 
               <> help "Window height. Default is 480."
               ))
           <*> optional (option auto (
-                 long "rows" 
-              <> short 'r' 
-              <> metavar "ROWS" 
+                 long "lines" 
+              <> short 'l' 
+              <> metavar "LINES" 
               <> help "Number of rows in waterfall. Default is 1000."
               ))
           <*> optional (option parseColorMap (
@@ -121,3 +121,6 @@ doIt Options{..} = do
 
 main = execParser opt >>= exceptT putStrLn return . doIt
 
+
+
+db20 x = 20 * log x / (log 10)
