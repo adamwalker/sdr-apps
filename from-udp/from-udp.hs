@@ -59,15 +59,15 @@ optParser = Options
               <> help "Window width. Default is 1024."
               ))
           <*> optional (option auto (
-                 long "height" 
-              <> short 'h' 
-              <> metavar "HEIGHT" 
+                 long "vertSize" 
+              <> short 'v' 
+              <> metavar "VERTSIZEHEIGHT" 
               <> help "Window height. Default is 480."
               ))
           <*> optional (option auto (
-                 long "rows" 
-              <> short 'r' 
-              <> metavar "ROWS" 
+                 long "lines" 
+              <> short 'l' 
+              <> metavar "LINES" 
               <> help "Number of rows in waterfall. Default is 1000."
               ))
           <*> optional (option parseColorMap (
